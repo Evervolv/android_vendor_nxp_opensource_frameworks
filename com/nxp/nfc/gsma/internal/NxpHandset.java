@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2015 NXP Semiconductors
+* Copyright (C) 2018 NXP Semiconductors
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import com.nxp.nfc.gsma.internal.NxpNfcController;
 import android.os.RemoteException;
 import java.lang.SecurityException;
 import android.util.Log;
-import com.nxp.nfc.NxpConstants;
+import com.nxp.nfc.NfcConstants;
 import android.nfc.NfcAdapter;
 import com.nxp.nfc.NxpNfcAdapter;
 import android.content.Context;
@@ -157,15 +157,15 @@ public class NxpHandset {
         if(secureElemArray != null && secureElemArray.length > 0x00) {
             Collections.addAll(secureElementList , secureElemArray);
             for(int i =0; i< secureElementList.size(); i++) {
-                if(secureElementList.get(i).equals(NxpConstants.UICC_ID))
+                if(secureElementList.get(i).equals(NfcConstants.UICC_ID))
                 {
                     secureElementList.set(i,"SIM1");
                 }
-                else if(secureElementList.get(i).equals(NxpConstants.UICC2_ID))
+                else if(secureElementList.get(i).equals(NfcConstants.UICC2_ID))
                 {
                     secureElementList.set(i,"SIM2");
                 }
-                else if(secureElementList.get(i).equals(NxpConstants.SMART_MX_ID))
+                else if(secureElementList.get(i).equals(NfcConstants.SMART_MX_ID))
                 {
                     secureElementList.set(i,"eSE");
                 }
