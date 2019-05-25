@@ -4,7 +4,7 @@
  *
  * The original Work has been changed by NXP Semiconductors.
  *
- * Copyright (C) 2013-2014 NXP Semiconductors
+ * Copyright (C) 2013-2019 NXP Semiconductors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@
 package com.nxp.nfc;
 
 import java.util.HashMap;
-import java.util.Arrays;
 import java.util.Map;
 import android.nfc.INfcAdapter;
 import android.nfc.NfcAdapter;
@@ -297,7 +296,8 @@ public final class NxpNfcAdapter {
     */
     public INxpNfcController getNxpNfcControllerInterface() {
         if(sService == null) {
-            throw new UnsupportedOperationException("You need a reference from NfcAdapter to use the NXP NFC APIs");
+            throw new UnsupportedOperationException("You need a reference from NfcAdapter to use the "
+                    + " NXP NFC APIs");
         }
         try {
             return sNxpService.getNxpNfcControllerInterface();
@@ -319,7 +319,7 @@ public final class NxpNfcAdapter {
             activeSEList = sNxpService.getActiveSecureElementList(pkg);
             if (activeSEList != null && activeSEList.length != 0)
             {
-                arr= new String[activeSEList.length];
+                arr = new String[activeSEList.length];
                 for(int i=0; i<activeSEList.length; i++)
                 {
                     Log.e(TAG, "getActiveSecureElementList activeSE[i]" + activeSEList[i]);
@@ -476,6 +476,48 @@ public final class NxpNfcAdapter {
         }
     }
     /**
+     * This api is called by applications to get last executed sems script output response
+     * in form of string format
+     * <p>Requires {@link android.Manifest.permission#NFC} permission.<ul>
+     * <li>This api shall be called only Nfcservice is enabled.
+     * <li>This api shall be called only when there are no NFC transactions ongoing
+     * </ul>
+     * @return Return SEMS output response file is string format
+     *          Valid string in case of success
+     *          Return NULL in error case
+     * @throws  IOException if any exception occurs during .
+     */
+    public String semsGetOutputData() throws IOException {
+      try {
+          return sNxpService.semsGetOutputData();
+      } catch(RemoteException e) {
+          e.printStackTrace();
+          attemptDeadServiceRecovery(e);
+          return null;
+      }
+    }
+    /**
+     * This api is called by applications to get last executed sems script
+     * execution status
+     * <p>Requires {@link android.Manifest.permission#NFC} permission.<ul>
+     * <li>This api shall be called only Nfcservice is enabled.
+     * <li>This api shall be called only when there are no NFC transactions ongoing
+     * </ul>
+     * @return Return last executed SEMS script execution status
+     *          SUCCESS if previous script execution is success
+     *          FAILED  if previous script execution failed
+     * @throws  IOException if any exception occurs during .
+     */
+    public boolean semsGetExecutionStatus() throws IOException {
+        try {
+            return sNxpService.semsGetExecutionStatus();
+        } catch(RemoteException e) {
+            e.printStackTrace();
+            attemptDeadServiceRecovery(e);
+            return false;
+        }
+      }
+    /**
      * This api is called by applications to select the UICC slot. Selected Slot
      * will be activated for all type of CE from UICC.
      * <p>Requires {@link android.Manifest.permission#NFC} permission.<ul>
@@ -513,6 +555,48 @@ public final class NxpNfcAdapter {
     public int getSelectedUicc() throws IOException {
         try {
             return sNxpService.getSelectedUicc();
+        } catch(RemoteException e) {
+            e.printStackTrace();
+            attemptDeadServiceRecovery(e);
+            return 0xFF;
+        }
+    }
+    /**
+     * This api is called by applications to Activate Secure Element Interface.
+     * <p>Requires {@link android.Manifest.permission#NFC} permission.<ul>
+     * <li>This api shall be called only Nfcservice is enabled.
+     * </ul>
+     * @return whether  the update of configuration is
+     *          success or not.
+     *          0x03 - failure
+     *          0x00 - success
+     *          0xFF - Service Unavialable
+     * @throws  IOException if any exception occurs during setting the NFC configuration.
+     */
+    public int activateSeInterface() throws IOException {
+        try {
+            return sNxpService.activateSeInterface();
+        } catch(RemoteException e) {
+            e.printStackTrace();
+            attemptDeadServiceRecovery(e);
+            return 0xFF;
+        }
+    }
+    /**
+     * This api is called by applications to Deactivate Secure Element Interface.
+     * <p>Requires {@link android.Manifest.permission#NFC} permission.<ul>
+     * <li>This api shall be called only Nfcservice is enabled.
+     * </ul>
+     * @return whether  the update of configuration is
+     *          success or not.
+     *          0x03 - failure
+     *          0x00 - success
+     *          0xFF - Service Unavialable
+     * @throws  IOException if any exception occurs during setting the NFC configuration.
+     */
+    public int deactivateSeInterface() throws IOException {
+        try {
+            return sNxpService.deactivateSeInterface();
         } catch(RemoteException e) {
             e.printStackTrace();
             attemptDeadServiceRecovery(e);
