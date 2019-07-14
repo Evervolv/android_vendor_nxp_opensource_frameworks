@@ -1,5 +1,10 @@
 /*
- * Copyright (C) 2013-2015 NXP Semiconductors
+ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+ * Not a Contribution.
+ *
+ * Copyright (C) 2015 NXP Semiconductors
+ *
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +18,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.nxp.intf;
 
-import com.nxp.intf.INxpExtrasService;
-import com.nxp.intf.ILoaderService;
-import com.nxp.intf.IJcopService;
- /**
- * {@hide}
- */
-interface IeSEClientServicesAdapter {
-    INxpExtrasService getNxpExtrasService();
-    ILoaderService getLoaderService();
-    IJcopService   getJcopService();
- }
+package android.nfc.cardemulation;
+
+parcelable NfcApduServiceInfo;

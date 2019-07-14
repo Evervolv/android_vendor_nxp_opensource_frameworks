@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
  * Not a Contribution.
  *
- * Copyright (C) 2015 NXP Semiconductors
+ * Copyright (C) 2018 NXP Semiconductors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class OffHostService {
         mPackageName = service.mPackageName;
         mServiceName = service.mServiceName;
         mModifiable = service.mModifiable;  // It will distinguish between static service and dynamic services
-        mAidGroupList = convertToOffHostAidGroupList(service.mNQAidGroupList);
+        mAidGroupList = convertToOffHostAidGroupList(service.mNfcAidGroupList);
         mBanner = service.mBanner;
         mBannerResId = service.getBannerId();
         mContext = service.getContext();
@@ -249,31 +249,27 @@ public class OffHostService {
         }
     }
 
-    private ArrayList<android.nfc.cardemulation.NQAidGroup> convertToCeAidGroupList(List<com.gsma.services.nfc.AidGroup> mAidGroups) {
-        ArrayList<android.nfc.cardemulation.NQAidGroup> mApduAidGroupList = new ArrayList<android.nfc.cardemulation.NQAidGroup>();
-        android.nfc.cardemulation.NQAidGroup mCeAidGroup = null;
+    private ArrayList<android.nfc.cardemulation.NfcAidGroup> convertToCeAidGroupList(List<com.gsma.services.nfc.AidGroup> mAidGroups) {
+        ArrayList<android.nfc.cardemulation.NfcAidGroup> mApduAidGroupList = new ArrayList<android.nfc.cardemulation.NfcAidGroup>();
+        android.nfc.cardemulation.NfcAidGroup mCeAidGroup = null;
         List<String> aidList = new ArrayList<String>();
         for(com.gsma.services.nfc.AidGroup mGroup : mAidGroups) {
             for(String aid :mGroup.getAidList()) {
                 aidList.add(aid);
             }
-            if(aidList == null || aidList.size() == 0) {
-              mCeAidGroup = new android.nfc.cardemulation.NQAidGroup(mGroup.getCategory(), mGroup.getDescription());
-            }else {
-              mCeAidGroup = new android.nfc.cardemulation.NQAidGroup(aidList, mGroup.getCategory(), mGroup.getDescription());
-            }
+            mCeAidGroup = new android.nfc.cardemulation.NfcAidGroup(aidList, mGroup.getCategory(), mGroup.getDescription());
             mApduAidGroupList.add(mCeAidGroup);
         }
     return mApduAidGroupList;
     }
 
     private NxpOffHostService convertToNxpOffhostService(OffHostService service) {
-        ArrayList<android.nfc.cardemulation.NQAidGroup> mAidGroupList = convertToCeAidGroupList(service.mAidGroupList);
+        ArrayList<android.nfc.cardemulation.NfcAidGroup> mAidGroupList = convertToCeAidGroupList(service.mAidGroupList);
         NxpOffHostService mNxpOffHostService = new NxpOffHostService(service.mUserId,service.mDescription, service.mSEName, service.mPackageName, service.mServiceName,
                                                                      service.mModifiable);
         mNxpOffHostService.setBanner(service.mBanner);
         mNxpOffHostService.setBannerId(service.mBannerResId);
-        mNxpOffHostService.mNQAidGroupList.addAll(mAidGroupList);
+        mNxpOffHostService.mNfcAidGroupList.addAll(mAidGroupList);
         return mNxpOffHostService;
   }
 
@@ -299,12 +295,12 @@ public class OffHostService {
         mNxpNfcController = nxpNfcController;
     }
 
-    private ArrayList<com.gsma.services.nfc.AidGroup> convertToOffHostAidGroupList(List<android.nfc.cardemulation.NQAidGroup> mAidGroups) {
+    private ArrayList<com.gsma.services.nfc.AidGroup> convertToOffHostAidGroupList(List<android.nfc.cardemulation.NfcAidGroup> mAidGroups) {
         ArrayList<com.gsma.services.nfc.AidGroup> mOffHostAidGroups= new ArrayList<com.gsma.services.nfc.AidGroup>();
         com.gsma.services.nfc.AidGroup mAidGroup;
         String aidGroupDescription = "";
-        for(android.nfc.cardemulation.NQAidGroup mCeAidGroup: mAidGroups) {
-		   if(mCeAidGroup.getDescription() == null) {
+        for(android.nfc.cardemulation.NfcAidGroup mCeAidGroup: mAidGroups) {
+            if(mCeAidGroup.getDescription() == null) {
                 aidGroupDescription = "";
             }
             else {

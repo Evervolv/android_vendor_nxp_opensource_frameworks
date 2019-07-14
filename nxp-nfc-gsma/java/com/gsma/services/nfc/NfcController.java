@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
  * Not a Contribution.
  *
- *  Copyright (C) 2015 NXP Semiconductors
+ *  Copyright (C) 2018 NXP Semiconductors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,10 +35,10 @@ import android.util.Log;
 import android.view.View.OnClickListener;
 import android.content.DialogInterface;
 import android.app.Activity;
-import com.nxp.nfc.gsma.internal.NxpHandset;
 import com.nxp.nfc.gsma.internal.NxpNfcController;
 import com.nxp.nfc.gsma.internal.NxpNfcController.NxpCallbacks;
 import com.nxp.nfc.gsma.internal.NxpOffHostService;
+import com.nxp.nfc.gsma.internal.NxpHandset;
 import com.gsma.services.utils.InsufficientResourcesException;
 import android.os.UserHandle;
 /**
@@ -213,9 +213,8 @@ public class NfcController {
      * @deprecated <a style="color:#FF0000">When Host Card Emulation (HCE) is supported</a>
      */
     @Deprecated
-    public boolean isCardEmulationEnabled() {
-        Log.d(TAG, "isCardEmulationEnabled():enter");
-        return mNxpNfcController.isHostCardEmulationEnabled();
+    public boolean isCardEmulationEnabled() throws Exception {
+        throw new InsufficientResourcesException("Host Card Emulation (HCE) is supported");
     }
 
     /**
@@ -234,13 +233,9 @@ public class NfcController {
      * @deprecated <a style="color:#FF0000">When Host Card Emulation (HCE) is supported</a>
      */
     @Deprecated
-    public void enableCardEmulationMode(NfcController.Callbacks cb) {
-        Log.d(TAG, "enableCardEmulationMode():enter");
-        if(!isEnabled()) {
-            throw new IllegalStateException("enableCardEmulationMode():nfcc not enabled");
-        } else {
-            throw new SecurityException("enableCardEmulationMode():app not allowed to use this api");
-        }
+    public void enableCardEmulationMode(NfcController.Callbacks cb) throws Exception {
+         throw new InsufficientResourcesException("Host Card Emulation (HCE) is supported");
+
     }
 
     /**
@@ -258,9 +253,8 @@ public class NfcController {
      * @deprecated <a style="color:#FF0000">When Host Card Emulation (HCE) is supported</a>
      */
     @Deprecated
-    public void disableCardEmulationMode(NfcController.Callbacks cb) {
-        Log.d(TAG, "disableCardEmulationMode():enter");
-        throw new SecurityException("disableCardEmulationMode():app not allowed to use this api");
+    public void disableCardEmulationMode(NfcController.Callbacks cb) throws Exception {
+        throw new InsufficientResourcesException("Host Card Emulation (HCE) is supported");
     }
 
     /**
@@ -371,14 +365,14 @@ public class NfcController {
         }
         return null;
     }
-    private ArrayList<android.nfc.cardemulation.NQAidGroup> convertToCeAidGroupList(List<com.gsma.services.nfc.AidGroup> mAidGroups) {
-        ArrayList<android.nfc.cardemulation.NQAidGroup> mApduAidGroupList = new ArrayList<android.nfc.cardemulation.NQAidGroup>();
-        android.nfc.cardemulation.NQAidGroup mCeAidGroup = null;
+    private ArrayList<android.nfc.cardemulation.NfcAidGroup> convertToCeAidGroupList(List<com.gsma.services.nfc.AidGroup> mAidGroups) {
+        ArrayList<android.nfc.cardemulation.NfcAidGroup> mApduAidGroupList = new ArrayList<android.nfc.cardemulation.NfcAidGroup>();
+        android.nfc.cardemulation.NfcAidGroup mCeAidGroup = null;
         List<String> aidList = new ArrayList<String>();
         for(com.gsma.services.nfc.AidGroup mGroup : mAidGroups) {
             if(!mGroup.getAidList().isEmpty())
             {
-                mCeAidGroup = new android.nfc.cardemulation.NQAidGroup(mGroup.getCategory(), mGroup.getDescription());
+                mCeAidGroup = new android.nfc.cardemulation.NfcAidGroup(mGroup.getCategory(), mGroup.getDescription());
                 aidList = mCeAidGroup.getAids();
                 for(String aid :mGroup.getAidList()) {
                     aidList.add(aid);
@@ -389,12 +383,12 @@ public class NfcController {
     return mApduAidGroupList;
     }
     private NxpOffHostService convertToNxpOffhostService(OffHostService service) {
-         ArrayList<android.nfc.cardemulation.NQAidGroup> mAidGroupList = convertToCeAidGroupList(service.mAidGroupList);
+         ArrayList<android.nfc.cardemulation.NfcAidGroup> mAidGroupList = convertToCeAidGroupList(service.mAidGroupList);
          NxpOffHostService mNxpOffHostService = new NxpOffHostService(service.mUserId,service.mDescription, service.mSEName, service.mPackageName, service.mServiceName, service.mModifiable);
          mNxpOffHostService.setBanner(service.mBanner);
          mNxpOffHostService.setContext(mContext);
          mNxpOffHostService.setBannerId(service.mBannerResId);
-         mNxpOffHostService.mNQAidGroupList.addAll(mAidGroupList);
+         mNxpOffHostService.mNfcAidGroupList.addAll(mAidGroupList);
          return mNxpOffHostService;
     }
 }
